@@ -52,6 +52,7 @@ export const AccountForm = ({ account, accounts, onSubmit, onValidationError, pa
       // Try to preselect a source account whose type matches the account's type
       const match = accounts.find(a => a.accountType === account.accountType && a.parentId === null) || accounts.find(a => a.accountType === account.accountType) || null;
       setSelectedTypeAccountId(match?.id || '');
+      initializedDefaultsRef.current = true;
     } else {
       // Reset form for new account
       // If we have a parent account context, use its type and color as defaults
@@ -75,26 +76,18 @@ export const AccountForm = ({ account, accounts, onSubmit, onValidationError, pa
       // Set the selectedTypeAccountId to the parent account or a matching type
       if (parentAccount) {
         setSelectedTypeAccountId(parentAccount.id);
+        initializedDefaultsRef.current = true; // Mark as initialized immediately
+      } else {
+        initializedDefaultsRef.current = false; // Let the next effect handle it
       }
-      
-      // Initial default will be handled by the next effect (runs once)
-      initializedDefaultsRef.current = false;
     }
   }, [account, parentAccount]);
 
-  // Set initial defaults ONCE when creating a new account (do not reset while typing)
+  // Set initial defaults ONCE when creating a new account without parent (do not reset while typing)
   useEffect(() => {
-    if (!account && !initializedDefaultsRef.current) {
-      // If we have a parent account, find a matching type account for the dropdown
-      if (parentAccount) {
-        const match = accounts.find(a => a.id === parentAccount.id) || 
-                     accounts.find(a => a.accountType === parentAccount.accountType) ||
-                     accounts.find(a => a.parentId === null);
-        setSelectedTypeAccountId(match?.id || '');
-      } else {
-        const firstTop = accounts.find(a => a.parentId === null);
-        setSelectedTypeAccountId(firstTop?.id || '');
-      }
+    if (!account && !parentAccount && !initializedDefaultsRef.current) {
+      const firstTop = accounts.find(a => a.parentId === null);
+      setSelectedTypeAccountId(firstTop?.id || '');
       initializedDefaultsRef.current = true;
     }
   }, [accounts, account, parentAccount]);
