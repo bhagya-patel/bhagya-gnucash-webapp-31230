@@ -11,7 +11,6 @@ import { AccountForm } from '@/components/AccountForm';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
-import { TransactionForm } from '@/components/TransactionForm';
 import { Settings } from '@/pages/Settings';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduledActionsPage from '@/pages/ScheduledActionsPage';
@@ -37,8 +36,6 @@ const Index = () => {
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showTransactionForm, setShowTransactionForm] = useState(false);
-  const [transactionAccount, setTransactionAccount] = useState<Account | null>(null);
   
   // Books state
   const [books, setBooks] = useState<Book[]>([
@@ -385,43 +382,6 @@ const Index = () => {
     }
   };
 
-  const handleAddTransaction = (account?: Account) => {
-    setTransactionAccount(account || null);
-    setShowTransactionForm(true);
-  };
-
-  const handleTransactionSuccess = async () => {
-    // Refresh accounts to update balances
-    if (user) {
-      const { data, error } = await supabase
-        .from('accounts')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching accounts:', error);
-      } else if (data) {
-        const mappedAccounts: Account[] = data.map(acc => ({
-          id: acc.id,
-          name: acc.name,
-          accountType: acc.account_type as any,
-          color: acc.color,
-          currency: acc.currency,
-          parentId: acc.parent_id,
-          balance: acc.balance || 0,
-          placeholder: acc.placeholder || false,
-          hidden: acc.hidden || false,
-          favorite: acc.favorite || false,
-          description: acc.description || '',
-          notes: acc.notes || '',
-          createdAt: acc.created_at
-        }));
-        setAccounts(mappedAccounts);
-      }
-    }
-  };
-
   const renderContent = () => {
     // Settings pages
     if (view === 'settings') {
@@ -588,12 +548,6 @@ const Index = () => {
             showBack={view === 'sub-accounts'}
             onBack={handleBack}
             onMenuClick={() => setDrawerOpen(true)}
-            balance={selectedAccount?.balance}
-            currency={selectedAccount?.currency}
-            showAddTransaction={!!selectedAccount}
-            isFavorite={selectedAccount?.favorite}
-            onAddTransaction={() => handleAddTransaction(selectedAccount || undefined)}
-            onToggleFavorite={selectedAccount ? () => handleToggleFavorite(selectedAccount.id) : undefined}
           />
         {view === 'list' && (
           <TabNavigation
@@ -641,13 +595,6 @@ const Index = () => {
             setEditingAccount(null);
             setView('create');
           }}
-        />
-        <TransactionForm
-          open={showTransactionForm}
-          onOpenChange={setShowTransactionForm}
-          preselectedAccount={transactionAccount}
-          accounts={accounts}
-          onSuccess={handleTransactionSuccess}
         />
       </>
     );
