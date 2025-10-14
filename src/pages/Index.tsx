@@ -11,6 +11,7 @@ import { AccountForm } from '@/components/AccountForm';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
+import { QuickBalanceDialog } from '@/components/QuickBalanceDialog';
 import { Settings } from '@/pages/Settings';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduledActionsPage from '@/pages/ScheduledActionsPage';
@@ -36,6 +37,8 @@ const Index = () => {
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showBalanceDialog, setShowBalanceDialog] = useState(false);
+  const [balanceAccount, setBalanceAccount] = useState<Account | null>(null);
   
   // Books state
   const [books, setBooks] = useState<Book[]>([
@@ -382,6 +385,35 @@ const Index = () => {
     }
   };
 
+  const handleQuickBalance = (account: Account) => {
+    setBalanceAccount(account);
+    setShowBalanceDialog(true);
+  };
+
+  const handleUpdateBalance = async (newBalance: number) => {
+    if (!balanceAccount || !user) return;
+
+    const { error } = await supabase
+      .from('accounts')
+      .update({ balance: newBalance })
+      .eq('id', balanceAccount.id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error updating balance:', error);
+      toast.error('Failed to update balance');
+    } else {
+      // Update local state
+      setAccounts(accounts.map(acc => 
+        acc.id === balanceAccount.id ? { ...acc, balance: newBalance } : acc
+      ));
+      if (selectedAccount?.id === balanceAccount.id) {
+        setSelectedAccount({ ...balanceAccount, balance: newBalance });
+      }
+      toast.success('Balance updated successfully');
+    }
+  };
+
   const renderContent = () => {
     // Settings pages
     if (view === 'settings') {
@@ -548,6 +580,12 @@ const Index = () => {
             showBack={view === 'sub-accounts'}
             onBack={handleBack}
             onMenuClick={() => setDrawerOpen(true)}
+            balance={selectedAccount?.balance}
+            currency={selectedAccount?.currency}
+            showAddTransaction={!!selectedAccount}
+            isFavorite={selectedAccount?.favorite}
+            onAddTransaction={() => selectedAccount && handleQuickBalance(selectedAccount)}
+            onToggleFavorite={selectedAccount ? () => handleToggleFavorite(selectedAccount.id) : undefined}
           />
         {view === 'list' && (
           <TabNavigation
@@ -595,6 +633,13 @@ const Index = () => {
             setEditingAccount(null);
             setView('create');
           }}
+        />
+        <QuickBalanceDialog
+          open={showBalanceDialog}
+          onOpenChange={setShowBalanceDialog}
+          currentBalance={balanceAccount?.balance || 0}
+          onSave={handleUpdateBalance}
+          accountName={balanceAccount?.name || ''}
         />
       </>
     );
