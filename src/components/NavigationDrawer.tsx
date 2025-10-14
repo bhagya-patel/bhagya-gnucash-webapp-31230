@@ -33,7 +33,7 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[280px] p-0 bg-background border-r border-border shadow-xl">
+      <SheetContent side="left" className="w-[280px] p-0 bg-gradient-to-br from-primary to-primary-glow border-r border-primary-glow shadow-xl">
         <div className="flex flex-col h-full">
           {/* Header with logo */}
           <div className="bg-gradient-to-br from-primary to-primary-glow px-4 py-6 shadow-lg">
@@ -56,12 +56,12 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
           </div>
 
           {/* Menu items */}
-          <div className="flex-1 overflow-y-auto bg-background">
+          <div className="flex-1 overflow-y-auto">
             {/* Open item */}
-            <div className="border-b border-border">
+            <div className="border-b border-white/20">
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none"
               >
                 <Folder className="h-5 w-5 mr-3 transition-smooth" />
                 <span className="font-medium">Open...</span>
@@ -71,11 +71,11 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
             {/* Accounts Section */}
             <div className="py-2">
               <div className="px-4 py-2">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Accounts</h3>
+                <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Accounts</h3>
               </div>
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
                 onClick={() => {
                   onFavoritesClick && onFavoritesClick();
                 }}
@@ -85,7 +85,7 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
                 onClick={onReportsClick}
               >
                 <BarChart3 className="h-5 w-5 mr-3 transition-smooth group-hover:text-primary" />
@@ -94,20 +94,20 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
             </div>
 
             {/* Transactions Section */}
-            <div className="py-2 border-t border-border">
+            <div className="py-2 border-t border-white/20">
               <div className="px-4 py-2">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Transactions</h3>
+                <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Transactions</h3>
               </div>
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
               >
                 <Clock className="h-5 w-5 mr-3 transition-smooth group-hover:text-primary" />
                 <span className="font-medium" onClick={onScheduledClick}>Scheduled Actions</span>
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
               >
                 <Upload className="h-5 w-5 mr-3 transition-smooth group-hover:text-primary" />
                 <span className="font-medium">Export...</span>
@@ -115,13 +115,13 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
             </div>
 
             {/* Preferences Section */}
-            <div className="py-2 border-t border-border">
+            <div className="py-2 border-t border-white/20">
               <div className="px-4 py-2">
-                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Preferences</h3>
+                <h3 className="text-xs font-bold text-white/70 uppercase tracking-wider">Preferences</h3>
               </div>
               <Button
                 variant="ghost"
-                className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
                 onClick={onSettingsClick}
               >
                 <Settings className="h-5 w-5 mr-3 transition-smooth group-hover:text-primary" />
@@ -130,7 +130,7 @@ export const NavigationDrawer = ({ open, onOpenChange, onSettingsClick, onLogout
               {onLogout && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start px-4 py-3 h-auto text-foreground hover:bg-accent dark:hover:bg-secondary/80 transition-smooth rounded-none group"
+                  className="w-full justify-start px-4 py-3 h-auto text-white hover:bg-white/20 transition-smooth rounded-none group"
                   onClick={onLogout}
                 >
                   <LogOut className="h-5 w-5 mr-3 transition-smooth group-hover:text-destructive" />
