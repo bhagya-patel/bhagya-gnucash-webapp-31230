@@ -10,6 +10,7 @@ import { AccountItem } from '@/components/AccountItem';
 import { AccountForm } from '@/components/AccountForm';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
+import { ChatbotWidget } from '@/components/ChatbotWidget';
 import { Settings } from '@/pages/Settings';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduledActionsPage from '@/pages/ScheduledActionsPage';
@@ -587,6 +588,7 @@ const Index = () => {
             ))
           )}
         </div>
+        <ChatbotWidget />
         <FloatingActionButton
           onClick={() => {
             setEditingAccount(null);
