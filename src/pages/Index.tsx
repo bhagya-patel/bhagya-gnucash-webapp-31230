@@ -99,7 +99,7 @@ const Index = () => {
     if (!user) return;
 
     const fetchAccounts = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('accounts')
         .select('*')
         .eq('user_id', user.id)
@@ -111,7 +111,7 @@ const Index = () => {
       }
 
       // Map database fields to Account type
-      const mappedAccounts: Account[] = (data || []).map(acc => ({
+      const mappedAccounts: Account[] = (data || []).map((acc: any) => ({
         id: acc.id,
         name: acc.name,
         accountType: acc.account_type as Account['accountType'],
@@ -124,7 +124,7 @@ const Index = () => {
         hidden: acc.hidden || false,
         favorite: acc.favorite || false,
         balance: Number(acc.balance) || 0,
-        createdAt: new Date(acc.created_at).getTime()
+        createdAt: Number(acc.created_at)
       }));
 
       setAccounts(mappedAccounts);
@@ -141,7 +141,7 @@ const Index = () => {
     fetchAccounts();
 
     // Set up realtime subscription
-    const channel = supabase
+    const channel = (supabase as any)
       .channel('accounts-changes')
       .on(
         'postgres_changes',
@@ -177,7 +177,7 @@ const Index = () => {
   const handleToggleFavorite = async (id: string) => {
     const account = accounts.find(acc => acc.id === id);
     if (account) {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('accounts')
         .update({ favorite: !account.favorite })
         .eq('id', id);
@@ -199,7 +199,7 @@ const Index = () => {
           await deleteRecursive(subAcc.id);
         }
         
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('accounts')
           .delete()
           .eq('id', accountId);
@@ -226,7 +226,7 @@ const Index = () => {
     try {
       if (editingAccount && editingAccount.id) {
         // Update existing account - map camelCase to snake_case
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('accounts')
           .update({
             name: accountData.name,
@@ -247,7 +247,7 @@ const Index = () => {
         toast.success('Account updated successfully');
       } else {
         // Create new account - map camelCase to snake_case
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('accounts')
           .insert({
             user_id: user.id,
@@ -261,7 +261,8 @@ const Index = () => {
             placeholder: accountData.placeholder || false,
             hidden: accountData.hidden || false,
             favorite: accountData.favorite || false,
-            balance: accountData.balance || 0
+            balance: accountData.balance || 0,
+            created_at: Date.now()
           });
 
         if (error) throw error;
@@ -453,7 +454,7 @@ const Index = () => {
           onExportCSV={() => {}}
           onDeleteAllAccounts={async () => {
             if (!user) return;
-            const { error } = await supabase
+            const { error } = await (supabase as any)
               .from('accounts')
               .delete()
               .eq('user_id', user.id);
