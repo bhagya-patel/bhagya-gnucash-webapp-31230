@@ -1,0 +1,112 @@
+{
+  "project_name": "GnuCash Clone React",
+  "description": "A mobile-first accounting web application that helps freelancers, students, and small businesses manage their finances. Built as a GnuCash clone with account management, transaction tracking, reports, and export functionality.",
+  "tech_stack": {
+    "frontend": {
+      "framework": "React 18.3.1",
+      "language": "TypeScript",
+      "build_tool": "Vite 5.4.19",
+      "ui_library": "shadcn/ui (Radix UI components)",
+      "styling": "Tailwind CSS",
+      "state_management": "React hooks (useState, useEffect, useCallback)",
+      "routing": "React Router DOM 6.30.1",
+      "form_handling": "React Hook Form 7.61.1",
+      "data_fetching": "TanStack Query 5.83.0",
+      "date_handling": "date-fns 3.6.0",
+      "charts": "Recharts 2.15.4",
+      "icons": "Lucide React 0.462.0",
+      "notifications": "Sonner 1.7.4",
+      "themes": "next-themes 0.3.0"
+    },
+    "backend": {
+      "database": "Supabase (PostgreSQL)",
+      "authentication": "Supabase Auth",
+      "realtime": "Supabase Realtime",
+      "storage": "Supabase Storage"
+    },
+    "development": {
+      "linter": "ESLint 9.32.0",
+      "type_checking": "TypeScript 5.8.3",
+      "bundler": "Vite with React SWC plugin"
+    }
+  },
+  "key_features": [
+    "User Authentication (Supabase Auth)",
+    "Account Management (Create, Edit, Delete, Favorite)",
+    "Hierarchical Account Structure (Parent/Child accounts)",
+    "Transaction Management",
+    "Financial Reports (Pie Chart, Bar Chart, Line Chart, Balance Sheet)",
+    "Export Functionality (CSV, QIF, XML formats)",
+    "Export Destinations (Local, Google Drive, Dropbox, ownCloud)",
+    "Scheduled Actions/Exports",
+    "Settings Management (General, Books, Accounts, Transactions, Backup, About)",
+    "Book Management (Multiple books support)",
+    "Dark Theme Support",
+    "Responsive Design (Mobile-first)",
+    "Real-time Data Sync",
+    "Navigation Drawer",
+    "Tab Navigation",
+    "Form Validation",
+    "Toast Notifications"
+  ],
+  "main_pages": [
+    "Index (Main Dashboard with Account List)",
+    "Auth (Authentication Page)",
+    "Settings (Settings Hub)",
+    "GeneralPreferences (General Settings)",
+    "ManageBooks (Book Management)",
+    "AccountPreferences (Account Settings)",
+    "TransactionPreferences (Transaction Settings)",
+    "BackupPreferences (Backup & Export Settings)",
+    "About (About Page)",
+    "ReportsPage (Financial Reports)",
+    "ScheduledActionsPage (Scheduled Actions)",
+    "CreateExportPage (Export Transactions - Enhanced with OAuth and ownCloud)",
+    "NotFound (404 Page)"
+  ],
+  "enhanced_features": [
+    "Advanced Export Page with conditional logic",
+    "OAuth Integration for Dropbox and Google Drive",
+    "ownCloud Credentials Modal with testing functionality",
+    "QIF-specific export options with date/time picker",
+    "Responsive modal dialogs",
+    "Form validation and error handling",
+    "Toast notifications for user feedback"
+  ],
+  "project_structure": {
+    "src/": {
+      "components/": "Reusable UI components (shadcn/ui based)",
+      "pages/": "Main application pages",
+      "hooks/": "Custom React hooks",
+      "lib/": "Utility functions and configurations",
+      "types/": "TypeScript type definitions",
+      "integrations/": "External service integrations (Supabase, Firebase)",
+      "reports/": "Report components and export utilities"
+    }
+  },
+  "authentication": {
+    "provider": "Supabase Auth",
+    "features": ["Email/Password login", "Session management", "Protected routes", "User state management"]
+  },
+  "database_schema": {
+    "accounts": {
+      "fields": ["id", "user_id", "name", "account_type", "color", "description", "parent_id", "currency", "notes", "placeholder", "hidden", "favorite", "balance", "created_at"],
+      "relationships": "Hierarchical structure with parent/child relationships"
+    }
+  },
+  "export_functionality": {
+    "formats": ["CSV", "QIF", "XML"],
+    "destinations": ["Local Download", "Google Drive (OAuth)", "Dropbox (OAuth)", "ownCloud (Credentials)"],
+    "features": ["Date range selection for QIF", "File compression", "Scheduled exports", "Credential management"]
+  },
+  "testing_requirements": {
+    "frontend_testing": true,
+    "responsive_design": true,
+    "user_authentication_flow": true,
+    "form_validation": true,
+    "modal_interactions": true,
+    "export_functionality": true,
+    "navigation_flow": true,
+    "settings_management": true
+  }
+}

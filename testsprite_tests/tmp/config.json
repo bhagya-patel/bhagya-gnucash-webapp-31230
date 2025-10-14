@@ -1,0 +1,9 @@
+{
+  "status": "init",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:8080",
+  "backendAuthType": "basic token",
+  "backendUsername": "bhagya@123",
+  "backendPassword": "bhagya@123"
+}
