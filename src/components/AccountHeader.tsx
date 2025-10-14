@@ -99,9 +99,7 @@ export const AccountHeader = ({
       
       {showAddTransaction && balance !== undefined && (
         <div className="flex items-center justify-between px-4 pb-4">
-          <div className={`text-2xl font-bold ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            {formatCurrency(balance)}
-          </div>
+          <div className="text-2xl font-bold">{formatCurrency(balance)}</div>
           <div className="flex items-center gap-2">
             {onToggleFavorite && (
               <Button

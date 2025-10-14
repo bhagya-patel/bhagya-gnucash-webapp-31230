@@ -11,7 +11,7 @@ import { AccountForm } from '@/components/AccountForm';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
-import { QuickBalanceDialog } from '@/components/QuickBalanceDialog';
+import { TransactionForm } from '@/components/TransactionForm';
 import { Settings } from '@/pages/Settings';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduledActionsPage from '@/pages/ScheduledActionsPage';
@@ -37,8 +37,8 @@ const Index = () => {
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showBalanceDialog, setShowBalanceDialog] = useState(false);
-  const [balanceAccount, setBalanceAccount] = useState<Account | null>(null);
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
+  const [transactionAccount, setTransactionAccount] = useState<Account | null>(null);
   
   // Books state
   const [books, setBooks] = useState<Book[]>([
@@ -385,32 +385,40 @@ const Index = () => {
     }
   };
 
-  const handleQuickBalance = (account: Account) => {
-    setBalanceAccount(account);
-    setShowBalanceDialog(true);
+  const handleAddTransaction = (account?: Account) => {
+    setTransactionAccount(account || null);
+    setShowTransactionForm(true);
   };
 
-  const handleUpdateBalance = async (newBalance: number) => {
-    if (!balanceAccount || !user) return;
+  const handleTransactionSuccess = async () => {
+    // Refresh accounts to update balances
+    if (user) {
+      const { data, error } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
 
-    const { error } = await supabase
-      .from('accounts')
-      .update({ balance: newBalance })
-      .eq('id', balanceAccount.id)
-      .eq('user_id', user.id);
-
-    if (error) {
-      console.error('Error updating balance:', error);
-      toast.error('Failed to update balance');
-    } else {
-      // Update local state
-      setAccounts(accounts.map(acc => 
-        acc.id === balanceAccount.id ? { ...acc, balance: newBalance } : acc
-      ));
-      if (selectedAccount?.id === balanceAccount.id) {
-        setSelectedAccount({ ...balanceAccount, balance: newBalance });
+      if (error) {
+        console.error('Error fetching accounts:', error);
+      } else if (data) {
+        const mappedAccounts: Account[] = data.map(acc => ({
+          id: acc.id,
+          name: acc.name,
+          accountType: acc.account_type as any,
+          color: acc.color,
+          currency: acc.currency,
+          parentId: acc.parent_id,
+          balance: acc.balance || 0,
+          placeholder: acc.placeholder || false,
+          hidden: acc.hidden || false,
+          favorite: acc.favorite || false,
+          description: acc.description || '',
+          notes: acc.notes || '',
+          createdAt: acc.created_at
+        }));
+        setAccounts(mappedAccounts);
       }
-      toast.success('Balance updated successfully');
     }
   };
 
@@ -584,7 +592,7 @@ const Index = () => {
             currency={selectedAccount?.currency}
             showAddTransaction={!!selectedAccount}
             isFavorite={selectedAccount?.favorite}
-            onAddTransaction={() => selectedAccount && handleQuickBalance(selectedAccount)}
+            onAddTransaction={() => handleAddTransaction(selectedAccount || undefined)}
             onToggleFavorite={selectedAccount ? () => handleToggleFavorite(selectedAccount.id) : undefined}
           />
         {view === 'list' && (
@@ -634,12 +642,12 @@ const Index = () => {
             setView('create');
           }}
         />
-        <QuickBalanceDialog
-          open={showBalanceDialog}
-          onOpenChange={setShowBalanceDialog}
-          currentBalance={balanceAccount?.balance || 0}
-          onSave={handleUpdateBalance}
-          accountName={balanceAccount?.name || ''}
+        <TransactionForm
+          open={showTransactionForm}
+          onOpenChange={setShowTransactionForm}
+          preselectedAccount={transactionAccount}
+          accounts={accounts}
+          onSuccess={handleTransactionSuccess}
         />
       </>
     );
