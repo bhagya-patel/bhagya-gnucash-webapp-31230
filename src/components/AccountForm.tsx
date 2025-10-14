@@ -71,10 +71,16 @@ export const AccountForm = ({ account, accounts, onSubmit, onValidationError, pa
         favorite: false,
         balance: 0
       });
+      
+      // Set the selectedTypeAccountId to the parent account or a matching type
+      if (parentAccount) {
+        setSelectedTypeAccountId(parentAccount.id);
+      }
+      
       // Initial default will be handled by the next effect (runs once)
       initializedDefaultsRef.current = false;
     }
-  }, [account]);
+  }, [account, parentAccount]);
 
   // Set initial defaults ONCE when creating a new account (do not reset while typing)
   useEffect(() => {
