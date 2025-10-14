@@ -532,6 +532,7 @@ const Index = () => {
             account={editingAccount}
             accounts={accounts}
             onSubmit={handleSaveAccount}
+            parentAccount={selectedAccount}
           />
         </div>
       );

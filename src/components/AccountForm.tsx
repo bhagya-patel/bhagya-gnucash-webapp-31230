@@ -13,9 +13,10 @@ interface AccountFormProps {
   accounts: Account[];
   onSubmit: (account: Omit<Account, 'id' | 'createdAt'>) => void;
   onValidationError?: () => void;
+  parentAccount?: Account | null; // Parent account context when creating sub-account
 }
 
-export const AccountForm = ({ account, accounts, onSubmit, onValidationError }: AccountFormProps) => {
+export const AccountForm = ({ account, accounts, onSubmit, onValidationError, parentAccount }: AccountFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -53,13 +54,17 @@ export const AccountForm = ({ account, accounts, onSubmit, onValidationError }: 
       setSelectedTypeAccountId(match?.id || '');
     } else {
       // Reset form for new account
+      // If we have a parent account context, use its type and color as defaults
+      const defaultType = parentAccount?.accountType || 'ASSET';
+      const defaultColor = parentAccount?.color || getAccountColor(defaultType);
+      
       setFormData({
         name: '',
         description: '',
-        parentId: null,
-        accountType: 'ASSET',
+        parentId: parentAccount?.id || null,
+        accountType: defaultType,
         currency: 'INR (Indian Rupee)',
-        color: '#2196F3',
+        color: defaultColor,
         notes: '',
         placeholder: false,
         hidden: false,
@@ -74,11 +79,19 @@ export const AccountForm = ({ account, accounts, onSubmit, onValidationError }: 
   // Set initial defaults ONCE when creating a new account (do not reset while typing)
   useEffect(() => {
     if (!account && !initializedDefaultsRef.current) {
-      const firstTop = accounts.find(a => a.parentId === null);
-      setSelectedTypeAccountId(firstTop?.id || '');
+      // If we have a parent account, find a matching type account for the dropdown
+      if (parentAccount) {
+        const match = accounts.find(a => a.id === parentAccount.id) || 
+                     accounts.find(a => a.accountType === parentAccount.accountType) ||
+                     accounts.find(a => a.parentId === null);
+        setSelectedTypeAccountId(match?.id || '');
+      } else {
+        const firstTop = accounts.find(a => a.parentId === null);
+        setSelectedTypeAccountId(firstTop?.id || '');
+      }
       initializedDefaultsRef.current = true;
     }
-  }, [accounts, account]);
+  }, [accounts, account, parentAccount]);
 
   const handleTypeChange = (type: Account['accountType']) => {
     setFormData({
