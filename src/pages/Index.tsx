@@ -116,15 +116,15 @@ const Index = () => {
         name: acc.name,
         accountType: acc.account_type as Account['accountType'],
         color: acc.color,
-        description: acc.description,
+        description: acc.description || '',
         parentId: acc.parent_id,
         currency: acc.currency,
-        notes: acc.notes,
-        placeholder: acc.placeholder,
-        hidden: acc.hidden,
-        favorite: acc.favorite,
-        balance: acc.balance,
-        createdAt: acc.created_at
+        notes: acc.notes || '',
+        placeholder: acc.placeholder || false,
+        hidden: acc.hidden || false,
+        favorite: acc.favorite || false,
+        balance: Number(acc.balance) || 0,
+        createdAt: new Date(acc.created_at).getTime()
       }));
 
       setAccounts(mappedAccounts);
@@ -254,15 +254,14 @@ const Index = () => {
             name: accountData.name,
             account_type: accountData.accountType,
             color: accountData.color,
-            description: accountData.description,
+            description: accountData.description || '',
             parent_id: accountData.parentId || null,
             currency: accountData.currency,
-            notes: accountData.notes,
-            placeholder: accountData.placeholder,
-            hidden: accountData.hidden,
-            favorite: accountData.favorite,
-            balance: accountData.balance,
-            created_at: Date.now()
+            notes: accountData.notes || '',
+            placeholder: accountData.placeholder || false,
+            hidden: accountData.hidden || false,
+            favorite: accountData.favorite || false,
+            balance: accountData.balance || 0
           });
 
         if (error) throw error;
