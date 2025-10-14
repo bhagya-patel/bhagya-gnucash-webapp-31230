@@ -159,20 +159,23 @@ export const ChatbotWidget = () => {
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-[#1a1d29] px-4 pb-4 flex flex-wrap gap-2">
-            {quickActions.map((action) => (
-              <Button
-                key={action}
-                variant="secondary"
-                size="sm"
-                onClick={() => handleQuickAction(action)}
-                className="text-xs bg-muted hover:bg-muted/80 text-foreground rounded-full"
-              >
-                {action}
-              </Button>
-            ))}
-          </div>
+          {/* Quick Actions - Only show at the start */}
+          {messages.length === 1 && (
+            <div className="bg-[#1a1d29] px-4 pb-4 flex flex-wrap gap-2">
+              {quickActions.map((action) => (
+                <Button
+                  key={action}
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleQuickAction(action)}
+                  disabled={isLoading}
+                  className="text-xs bg-muted hover:bg-muted/80 text-foreground rounded-full"
+                >
+                  {action}
+                </Button>
+              ))}
+            </div>
+          )}
 
           {/* Input Area */}
           <div className="bg-[#0f1117] p-4 rounded-b-2xl flex items-center gap-2">
