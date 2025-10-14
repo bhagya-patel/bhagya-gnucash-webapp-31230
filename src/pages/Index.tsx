@@ -11,6 +11,7 @@ import { AccountForm } from '@/components/AccountForm';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { NavigationDrawer } from '@/components/NavigationDrawer';
 import { ChatbotWidget } from '@/components/ChatbotWidget';
+import { QuickBalanceDialog } from '@/components/QuickBalanceDialog';
 import { Settings } from '@/pages/Settings';
 import ReportsPage from '@/pages/ReportsPage';
 import ScheduledActionsPage from '@/pages/ScheduledActionsPage';
@@ -36,6 +37,8 @@ const Index = () => {
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showBalanceDialog, setShowBalanceDialog] = useState(false);
+  const [balanceAccount, setBalanceAccount] = useState<Account | null>(null);
   
   // Books state
   const [books, setBooks] = useState<Book[]>([
@@ -188,6 +191,25 @@ const Index = () => {
       } else {
         toast.success(account.favorite ? 'Removed from favorites' : 'Added to favorites');
       }
+    }
+  };
+
+  const handleQuickBalance = (account: Account) => {
+    setBalanceAccount(account);
+    setShowBalanceDialog(true);
+  };
+
+  const handleUpdateBalance = async (accountId: string, newBalance: number) => {
+    try {
+      const { error } = await (supabase as any)
+        .from('accounts')
+        .update({ balance: newBalance })
+        .eq('id', accountId);
+
+      if (error) throw error;
+      toast.success('Balance updated successfully');
+    } catch (error) {
+      toast.error('Failed to update balance');
     }
   };
 
@@ -585,6 +607,7 @@ const Index = () => {
                 }}
                 onDelete={handleDeleteAccount}
                 onClick={handleAccountClick}
+                onQuickBalance={handleQuickBalance}
               />
             ))
           )}
@@ -636,6 +659,12 @@ const Index = () => {
         }}
       />
       {renderContent()}
+      <QuickBalanceDialog
+        account={balanceAccount}
+        open={showBalanceDialog}
+        onOpenChange={setShowBalanceDialog}
+        onUpdateBalance={handleUpdateBalance}
+      />
     </div>
   );
 };

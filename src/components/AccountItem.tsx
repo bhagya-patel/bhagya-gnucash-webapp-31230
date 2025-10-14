@@ -15,6 +15,7 @@ interface AccountItemProps {
   onEdit: (account: Account) => void;
   onDelete: (id: string) => void;
   onClick: (account: Account) => void;
+  onQuickBalance: (account: Account) => void;
 }
 
 export const AccountItem = ({
@@ -23,7 +24,8 @@ export const AccountItem = ({
   onToggleFavorite,
   onEdit,
   onDelete,
-  onClick
+  onClick,
+  onQuickBalance
 }: AccountItemProps) => {
   return (
     <div
@@ -43,7 +45,13 @@ export const AccountItem = ({
         )}
       </div>
       <div className="flex items-center gap-1 shrink-0">
-        <span className="text-base font-semibold text-card-foreground mr-2 transition-smooth group-hover:text-primary">₹{account.balance.toFixed(2)}</span>
+        <span 
+          className={`text-base font-semibold mr-2 transition-smooth group-hover:scale-105 ${
+            account.balance >= 0 ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
+          ₹{account.balance.toFixed(2)}
+        </span>
         <Button
           variant="ghost"
           size="icon"
@@ -64,15 +72,7 @@ export const AccountItem = ({
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onEdit({
-              ...account,
-              id: '',
-              name: '',
-              description: '',
-              parentId: account.id,
-              balance: 0,
-              createdAt: 0
-            } as Account);
+            onQuickBalance(account);
           }}
           className="hover:bg-muted dark:hover:bg-white/10 h-9 w-9 transition-fast hover:scale-110 hover:bg-primary/10"
         >
