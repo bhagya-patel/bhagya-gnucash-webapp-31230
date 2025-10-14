@@ -30,7 +30,7 @@ export const ChatbotWidget = () => {
     <>
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-[380px] h-[600px] bg-card rounded-2xl shadow-2xl flex flex-col z-40 border border-border animate-scale-in">
+        <div className="fixed bottom-6 left-6 w-[380px] h-[600px] bg-card rounded-2xl shadow-2xl flex flex-col z-40 border border-border animate-scale-in">
           {/* Header */}
           <div className="bg-blue-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ export const ChatbotWidget = () => {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-2xl z-40 animate-fade-in"
+          className="fixed bottom-6 left-6 h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-2xl z-40 animate-fade-in"
           size="icon"
         >
           <MessageCircle className="h-6 w-6" />
