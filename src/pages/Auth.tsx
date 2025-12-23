@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { User, Mail, Lock, ArrowLeft, Chrome, CheckCircle, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, ArrowLeft, Chrome, CheckCircle, KeyRound, Eye, EyeOff, UserCircle } from 'lucide-react';
 import { FaGithub, FaFacebookF } from 'react-icons/fa';
 
 type AuthView = 'signin' | 'signup' | 'forgot-password' | 'email-confirmation' | 'update-password';
@@ -12,6 +12,7 @@ export const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [view, setView] = useState<AuthView>('signin');
   const [loading, setLoading] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
@@ -105,6 +106,7 @@ export const Auth = () => {
           emailRedirectTo: redirectUrl,
           data: {
             username: username,
+            full_name: fullName,
           },
         },
       });
@@ -117,6 +119,7 @@ export const Auth = () => {
       setEmail('');
       setPassword('');
       setUsername('');
+      setFullName('');
     } catch (error: any) {
       toast.error(error.message || 'An error occurred');
     } finally {
@@ -167,6 +170,7 @@ export const Auth = () => {
     setEmail('');
     setPassword('');
     setUsername('');
+    setFullName('');
   };
 
   const handleShowForgotPassword = (e: React.MouseEvent) => {
@@ -511,6 +515,17 @@ export const Auth = () => {
         <div className="credentials-panel signup">
           <form onSubmit={handleSignup}>
             <h2 className="slide-element">Register</h2>
+            
+            <div className="field-wrapper slide-element">
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder=" "
+              />
+              <label>Full Name</label>
+              <UserCircle className="w-5 h-5" />
+            </div>
             
             <div className="field-wrapper slide-element">
               <input
