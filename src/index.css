@@ -502,6 +502,12 @@ All colors MUST be HSL.
   color: #1877f2;
 }
 
+.social-btn.phone:hover {
+  border-color: #00ff88;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+}
+
 /* Email Confirmation Styles */
 .email-confirmation-content {
   display: flex;
@@ -636,6 +642,30 @@ All colors MUST be HSL.
 .auth-wrapper.toggled .secondary-shape {
   transform: rotate(-11deg) skewY(-41deg);
   transition-delay: 1.2s;
+}
+
+/* Reset Password Layout Fix */
+.auth-reset-wrapper {
+  background: #1a1a2e;
+}
+
+.auth-reset-wrapper .credentials-panel {
+  position: relative;
+  z-index: 20;
+}
+
+.auth-reset-wrapper .background-shape.reset-bg {
+  z-index: 0;
+  transform: rotate(10deg) skewY(40deg);
+  right: -100px;
+  top: -100px;
+}
+
+.auth-reset-wrapper .secondary-shape.reset-secondary {
+  z-index: 1;
+  transform: rotate(-5deg) skewY(-20deg);
+  left: -200px;
+  top: 60%;
 }
 
 /* Mobile Responsive Styles */
