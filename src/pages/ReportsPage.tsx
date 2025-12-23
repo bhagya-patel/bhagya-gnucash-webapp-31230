@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { AccountHeader } from '@/components/AccountHeader';
 import { Button } from '@/components/ui/button';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Loader2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MockDataService } from '@/lib/mockData';
+import { useAccounts } from '@/hooks/useAccounts';
 import { PieChartReport } from '../reports/PieChartReport';
 import { BarChartReport } from '../reports/BarChartReport';
 import { LineChartReport } from '../reports/LineChartReport';
@@ -20,8 +20,7 @@ export const ReportsPage = ({ onMenuClick }: { onMenuClick?: () => void }) => {
     groupSmallSlices: true,
   });
 
-  const accounts = useMemo(() => MockDataService.getAccounts(), []);
-  const transactions = useMemo(() => MockDataService.getTransactions(), []);
+  const { data: accounts, isLoading } = useAccounts();
 
   return (
     <div className="flex-1 overflow-y-auto bg-background">
@@ -54,17 +53,29 @@ export const ReportsPage = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         </div>
 
         <div className="bg-card rounded-md border border-border p-2 min-h-[420px]">
-          {active === 'PIE_CHART' && (
-            <PieChartReport accounts={accounts} transactions={transactions} options={options} />
-          )}
-          {active === 'BAR_CHART' && (
-            <BarChartReport accounts={accounts} transactions={transactions} options={options} />
-          )}
-          {active === 'LINE_CHART' && (
-            <LineChartReport accounts={accounts} transactions={transactions} options={options} />
-          )}
-          {active === 'BALANCE_SHEET' && (
-            <BalanceSheetReport accounts={accounts} transactions={transactions} />
+          {isLoading ? (
+            <div className="flex items-center justify-center h-96">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : !accounts || accounts.length === 0 ? (
+            <div className="flex items-center justify-center h-96 text-muted-foreground">
+              No accounts found
+            </div>
+          ) : (
+            <>
+              {active === 'PIE_CHART' && (
+                <PieChartReport accounts={accounts} options={options} />
+              )}
+              {active === 'BAR_CHART' && (
+                <BarChartReport accounts={accounts} options={options} />
+              )}
+              {active === 'LINE_CHART' && (
+                <LineChartReport accounts={accounts} options={options} />
+              )}
+              {active === 'BALANCE_SHEET' && (
+                <BalanceSheetReport accounts={accounts} />
+              )}
+            </>
           )}
         </div>
       </div>

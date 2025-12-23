@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 interface AccountFormProps {
   account?: Account | null;
   accounts: Account[];
-  onSubmit: (account: Omit<Account, 'id' | 'createdAt'>) => void;
+  onSubmit: (account: Omit<Account, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onValidationError?: () => void;
   parentAccount?: Account | null; // Parent account context when creating sub-account
 }

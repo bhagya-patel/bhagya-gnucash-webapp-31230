@@ -354,7 +354,11 @@ const Index = () => {
     }
     
     if (activeTab === 'RECENT') {
-      return [];
+      // Show accounts created or modified within the last 24 hours
+      const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
+      return [...accounts]
+        .filter(a => a.createdAt >= twentyFourHoursAgo || a.updatedAt >= twentyFourHoursAgo)
+        .sort((a, b) => Math.max(b.createdAt, b.updatedAt) - Math.max(a.createdAt, a.updatedAt));
     }
     
     return getTopLevelAccounts();

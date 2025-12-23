@@ -18,30 +18,31 @@ function pick<T>(arr: T[]): T {
 
 export function generateMockAccounts(): Account[] {
   // Minimal fields used in UI
+  const now = Date.now();
   const assets: Account[] = [
-    { id: 'a_checking', name: 'Checking Account', accountType: 'ASSET', color: '#4CAF50', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'a_savings', name: 'Savings Account', accountType: 'ASSET', color: '#4CAF50', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
+    { id: 'a_checking', name: 'Checking Account', accountType: 'ASSET', color: '#4CAF50', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'a_savings', name: 'Savings Account', accountType: 'ASSET', color: '#4CAF50', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
   ];
 
   const income: Account[] = [
-    { id: 'i_salary', name: 'Salary', accountType: 'INCOME', color: '#2196F3', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'i_freelance', name: 'Freelance', accountType: 'INCOME', color: '#2196F3', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
+    { id: 'i_salary', name: 'Salary', accountType: 'INCOME', color: '#2196F3', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'i_freelance', name: 'Freelance', accountType: 'INCOME', color: '#2196F3', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
   ];
 
   const expenses: Account[] = [
-    { id: 'e_groceries', name: 'Groceries', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'e_rent', name: 'Rent', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'e_transport', name: 'Transport', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'e_utilities', name: 'Utilities', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
+    { id: 'e_groceries', name: 'Groceries', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'e_rent', name: 'Rent', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'e_transport', name: 'Transport', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'e_utilities', name: 'Utilities', accountType: 'EXPENSE', color: '#F44336', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
   ];
 
   const liabilities: Account[] = [
-    { id: 'l_credit', name: 'Credit Card', accountType: 'LIABILITY', color: '#9C27B0', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
-    { id: 'l_loan', name: 'Personal Loan', accountType: 'LIABILITY', color: '#9C27B0', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
+    { id: 'l_credit', name: 'Credit Card', accountType: 'LIABILITY', color: '#9C27B0', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
+    { id: 'l_loan', name: 'Personal Loan', accountType: 'LIABILITY', color: '#9C27B0', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
   ];
 
   const equity: Account[] = [
-    { id: 'eq_owner', name: 'Owner Equity', accountType: 'EQUITY', color: '#FF9800', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: Date.now() },
+    { id: 'eq_owner', name: 'Owner Equity', accountType: 'EQUITY', color: '#FF9800', description: '', parentId: null, currency: 'INR (Indian Rupee)', notes: '', placeholder: false, hidden: false, favorite: false, balance: 0, createdAt: now, updatedAt: now },
   ];
 
   return [...assets, ...income, ...expenses, ...liabilities, ...equity];

@@ -12,6 +12,7 @@ export interface Account {
   favorite: boolean;
   balance: number;
   createdAt: number;
+  updatedAt: number;
 }
 
 export type AccountType = 

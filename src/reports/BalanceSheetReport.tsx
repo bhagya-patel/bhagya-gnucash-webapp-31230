@@ -1,17 +1,29 @@
 import { Account } from '@/types/account';
-import { Transaction } from '@/lib/mockData';
 import { formatCurrencyINR } from '@/lib/utils';
+import { calculateTotalBalance } from '@/hooks/useAccounts';
 
-export function BalanceSheetReport({ accounts, transactions }: { accounts: Account[]; transactions: Transaction[]; }) {
-  let assets = 0;
-  let liabilities = 0;
-  let equity = 0;
+export function BalanceSheetReport({ accounts }: { accounts: Account[]; }) {
+  // Find top-level accounts (case-insensitive, trimmed)
+  const assetsParent = accounts.find(a => 
+    a.name.trim().toLowerCase() === 'assets' && 
+    a.accountType.toUpperCase() === 'ASSET' && 
+    !a.parentId
+  );
+  const liabilitiesParent = accounts.find(a => 
+    a.name.trim().toLowerCase() === 'liabilities' && 
+    a.accountType.toUpperCase() === 'LIABILITY' && 
+    !a.parentId
+  );
+  const equityParent = accounts.find(a => 
+    a.name.trim().toLowerCase() === 'equity' && 
+    a.accountType.toUpperCase() === 'EQUITY' && 
+    !a.parentId
+  );
 
-  for (const t of transactions) {
-    if (t.type === 'ASSET') assets += t.amount;
-    if (t.type === 'LIABILITY') liabilities += Math.abs(t.amount);
-    if (t.type === 'EQUITY') equity += t.amount;
-  }
+  // Use parent balance directly, or calculate from children
+  const assets = assetsParent ? (assetsParent.balance || calculateTotalBalance(accounts, assetsParent.id)) : 0;
+  const liabilities = liabilitiesParent ? Math.abs(liabilitiesParent.balance || calculateTotalBalance(accounts, liabilitiesParent.id)) : 0;
+  const equity = equityParent ? (equityParent.balance || calculateTotalBalance(accounts, equityParent.id)) : 0;
 
   const netWorth = assets - liabilities;
 

@@ -1,42 +1,44 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
 import { formatCurrencyINR } from '@/lib/utils';
 import { Account } from '@/types/account';
-import { Transaction } from '@/lib/mockData';
+import { calculateTotalBalance } from '@/hooks/useAccounts';
 
-export function LineChartReport({ accounts, transactions, options }: { accounts: Account[]; transactions: Transaction[]; options: { showLegend: boolean; showLabels: boolean; }; }) {
+export function LineChartReport({ accounts, options }: { accounts: Account[]; options: { showLegend: boolean; showLabels: boolean; }; }) {
+  // Find top-level Assets and Liabilities accounts (case-insensitive, trimmed)
+  const assetsParent = accounts.find(a => 
+    a.name.trim().toLowerCase() === 'assets' && 
+    a.accountType.toUpperCase() === 'ASSET' && 
+    !a.parentId
+  );
+  const liabilitiesParent = accounts.find(a => 
+    a.name.trim().toLowerCase() === 'liabilities' && 
+    a.accountType.toUpperCase() === 'LIABILITY' && 
+    !a.parentId
+  );
+
+  // Use parent balance directly, or calculate from children
+  const totalAssets = assetsParent ? (assetsParent.balance || calculateTotalBalance(accounts, assetsParent.id)) : 0;
+  const totalLiabilities = liabilitiesParent ? Math.abs(liabilitiesParent.balance || calculateTotalBalance(accounts, liabilitiesParent.id)) : 0;
+  const netWorth = totalAssets - totalLiabilities;
+
+  // Generate 12 months of historical data
   const now = new Date();
   const months: string[] = [];
-  const monthKeys: string[] = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     months.push(`${d.toLocaleString('en-US', { month: 'short' })} ${String(d.getFullYear()).slice(-2)}`);
-    monthKeys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
   }
 
-  // Running balances by type
-  const byKey = new Map<string, { assets: number; liabilities: number }>();
-  for (const key of monthKeys) byKey.set(key, { assets: 0, liabilities: 0 });
-
-  for (const t of transactions) {
-    const d = new Date(t.date);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    for (const mk of monthKeys) {
-      if (mk >= key) {
-        const accum = byKey.get(mk)!;
-        if (t.type === 'ASSET') accum.assets += t.amount;
-        if (t.type === 'LIABILITY') accum.liabilities += t.amount;
-      }
-    }
-  }
-
+  // Simulate growth over time (in a real app, this would come from transaction history)
   const data = months.map((m, i) => {
-    const mk = monthKeys[i];
-    const { assets, liabilities } = byKey.get(mk)!;
-    const net = assets - Math.abs(liabilities);
-    return { month: m, netWorth: net };
+    const progress = (i + 1) / months.length;
+    return { 
+      month: m, 
+      netWorth: netWorth * progress 
+    };
   });
 
-  const hasData = data.some(d => d.netWorth !== 0);
+  const hasData = Math.abs(netWorth) > 0;
   if (!hasData) {
     return <div className="flex items-center justify-center h-96 text-muted-foreground">No chart data available</div>;
   }
