@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { User, Mail, Lock, ArrowLeft, Chrome, CheckCircle, KeyRound, Eye, EyeOff, UserCircle, Phone } from 'lucide-react';
 import { FaFacebookF } from 'react-icons/fa';
 
-type AuthView = 'signin' | 'signup' | 'forgot-password' | 'email-confirmation' | 'update-password';
+type AuthView = 'signin' | 'signup' | 'forgot-password' | 'email-confirmation' | 'update-password' | 'phone-login' | 'phone-verify';
 
 export const Auth = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +18,8 @@ export const Auth = () => {
   const [signupEmail, setSignupEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otpCode, setOtpCode] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -240,7 +242,83 @@ export const Auth = () => {
   };
 
   const handlePhoneLogin = () => {
-    toast.info('Phone authentication coming soon! Please use email or social login for now.');
+    setView('phone-login');
+    setPhoneNumber('');
+    setOtpCode('');
+  };
+
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      // Format phone number - ensure it has country code
+      let formattedPhone = phoneNumber.trim();
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhone,
+      });
+
+      if (error) throw error;
+      
+      toast.success('OTP sent to your phone!');
+      setView('phone-verify');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      let formattedPhone = phoneNumber.trim();
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+
+      const { error } = await supabase.auth.verifyOtp({
+        phone: formattedPhone,
+        token: otpCode,
+        type: 'sms',
+      });
+
+      if (error) throw error;
+      
+      toast.success('Phone verified successfully!');
+      navigate('/');
+    } catch (error: any) {
+      toast.error(error.message || 'Invalid OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setLoading(true);
+    try {
+      let formattedPhone = phoneNumber.trim();
+      if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: formattedPhone,
+      });
+
+      if (error) throw error;
+      toast.success('OTP resent successfully!');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to resend OTP');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFacebookLogin = async () => {
@@ -256,6 +334,132 @@ export const Auth = () => {
       toast.error(error.message || 'Failed to sign in with Facebook');
     }
   };
+
+  // Phone login view - enter phone number
+  if (view === 'phone-login') {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center p-5" style={{ background: '#1a1a2e' }}>
+        <div className="auth-wrapper auth-reset-wrapper">
+          <div className="credentials-panel signin" style={{ width: '100%', zIndex: 20 }}>
+            <form onSubmit={handleSendOtp}>
+              <div className="confirmation-icon slide-element" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <Phone className="w-16 h-16" style={{ color: '#00ff88' }} />
+              </div>
+              
+              <h2 className="slide-element" style={{ marginBottom: '15px' }}>Phone Login</h2>
+              
+              <p className="slide-element" style={{ fontSize: '14px', color: '#aaa', textAlign: 'center', marginBottom: '20px' }}>
+                Enter your phone number with country code (e.g., +1234567890)
+              </p>
+              
+              <div className="field-wrapper slide-element">
+                <input
+                  type="tel"
+                  required
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder=" "
+                  pattern="^\+?[0-9]{10,15}$"
+                  title="Please enter a valid phone number with country code"
+                />
+                <label>Phone Number</label>
+                <Phone className="w-5 h-5" />
+              </div>
+              
+              <button
+                type="submit"
+                className="auth-submit-button slide-element"
+                disabled={loading}
+              >
+                {loading ? 'Sending...' : 'Send OTP'}
+              </button>
+              
+              <div className="switch-link slide-element">
+                <a onClick={handleBackToLogin} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                  <ArrowLeft className="w-4 h-4" /> Back to Login
+                </a>
+              </div>
+            </form>
+          </div>
+
+          {/* Background Shapes */}
+          <div className="background-shape reset-bg"></div>
+          <div className="secondary-shape reset-secondary"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Phone OTP verification view
+  if (view === 'phone-verify') {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center p-5" style={{ background: '#1a1a2e' }}>
+        <div className="auth-wrapper auth-reset-wrapper">
+          <div className="credentials-panel signin" style={{ width: '100%', zIndex: 20 }}>
+            <form onSubmit={handleVerifyOtp}>
+              <div className="confirmation-icon slide-element" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+                <KeyRound className="w-16 h-16" style={{ color: '#00ff88' }} />
+              </div>
+              
+              <h2 className="slide-element" style={{ marginBottom: '15px' }}>Verify OTP</h2>
+              
+              <p className="slide-element" style={{ fontSize: '14px', color: '#aaa', textAlign: 'center', marginBottom: '10px' }}>
+                We've sent a verification code to:
+              </p>
+              
+              <p className="slide-element" style={{ fontSize: '16px', color: '#00ff88', textAlign: 'center', marginBottom: '20px', fontWeight: '600' }}>
+                {phoneNumber.startsWith('+') ? phoneNumber : '+' + phoneNumber}
+              </p>
+              
+              <div className="field-wrapper slide-element">
+                <input
+                  type="text"
+                  required
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder=" "
+                  maxLength={6}
+                  pattern="[0-9]{6}"
+                  title="Please enter the 6-digit OTP"
+                  style={{ letterSpacing: '0.5em', textAlign: 'center', fontSize: '20px' }}
+                />
+                <label>Enter 6-digit OTP</label>
+                <KeyRound className="w-5 h-5" />
+              </div>
+              
+              <button
+                type="submit"
+                className="auth-submit-button slide-element"
+                disabled={loading}
+              >
+                {loading ? 'Verifying...' : 'Verify & Login'}
+              </button>
+              
+              <button
+                type="button"
+                className="auth-submit-button slide-element"
+                onClick={handleResendOtp}
+                disabled={loading}
+                style={{ marginTop: '10px', background: 'transparent', border: '1px solid #00ff88', color: '#00ff88' }}
+              >
+                {loading ? 'Sending...' : 'Resend OTP'}
+              </button>
+              
+              <div className="switch-link slide-element">
+                <a onClick={() => setView('phone-login')} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                  <ArrowLeft className="w-4 h-4" /> Change Phone Number
+                </a>
+              </div>
+            </form>
+          </div>
+
+          {/* Background Shapes */}
+          <div className="background-shape reset-bg"></div>
+          <div className="secondary-shape reset-secondary"></div>
+        </div>
+      </div>
+    );
+  }
 
   // Update password view
   if (view === 'update-password') {
