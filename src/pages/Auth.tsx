@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { User, Mail, Lock, ArrowLeft, Chrome, CheckCircle, KeyRound, Eye, EyeOff, UserCircle } from 'lucide-react';
-import { FaGithub, FaFacebookF } from 'react-icons/fa';
+import { User, Mail, Lock, ArrowLeft, Chrome, CheckCircle, KeyRound, Eye, EyeOff, UserCircle, Phone } from 'lucide-react';
+import { FaFacebookF } from 'react-icons/fa';
 
 type AuthView = 'signin' | 'signup' | 'forgot-password' | 'email-confirmation' | 'update-password';
 
@@ -239,18 +239,8 @@ export const Auth = () => {
     }
   };
 
-  const handleGitHubLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
-      if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to sign in with GitHub');
-    }
+  const handlePhoneLogin = () => {
+    toast.info('Phone authentication coming soon! Please use email or social login for now.');
   };
 
   const handleFacebookLogin = async () => {
@@ -383,12 +373,12 @@ export const Auth = () => {
   if (view === 'forgot-password') {
     return (
       <div className="min-h-screen flex flex-col justify-center items-center p-5" style={{ background: '#1a1a2e' }}>
-        <div className="auth-wrapper">
-          <div className="credentials-panel signin" style={{ width: '100%' }}>
+        <div className="auth-wrapper auth-reset-wrapper">
+          <div className="credentials-panel signin" style={{ width: '100%', zIndex: 20 }}>
             <form onSubmit={handleForgotPassword}>
-              <h2 className="slide-element">Reset Password</h2>
+              <h2 className="slide-element" style={{ marginBottom: '15px' }}>Reset Password</h2>
               
-              <p className="slide-element" style={{ fontSize: '14px', color: '#aaa', textAlign: 'center', marginBottom: '10px' }}>
+              <p className="slide-element" style={{ fontSize: '14px', color: '#aaa', textAlign: 'center', marginBottom: '20px' }}>
                 Enter your email and we'll send you a link to reset your password.
               </p>
               
@@ -413,16 +403,16 @@ export const Auth = () => {
               </button>
               
               <div className="switch-link slide-element">
-                <a onClick={handleBackToLogin} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <a onClick={handleBackToLogin} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
                   <ArrowLeft className="w-4 h-4" /> Back to Login
                 </a>
               </div>
             </form>
           </div>
 
-          {/* Background Shapes */}
-          <div className="background-shape"></div>
-          <div className="secondary-shape"></div>
+          {/* Background Shapes - positioned behind content */}
+          <div className="background-shape reset-bg"></div>
+          <div className="secondary-shape reset-secondary"></div>
         </div>
       </div>
     );
@@ -497,8 +487,8 @@ export const Auth = () => {
               <button type="button" className="social-btn facebook" onClick={handleFacebookLogin}>
                 <FaFacebookF className="w-5 h-5" />
               </button>
-              <button type="button" className="social-btn github" onClick={handleGitHubLogin}>
-                <FaGithub className="w-5 h-5" />
+              <button type="button" className="social-btn phone" onClick={handlePhoneLogin}>
+                <Phone className="w-5 h-5" />
               </button>
             </div>
             
@@ -604,8 +594,8 @@ export const Auth = () => {
               <button type="button" className="social-btn facebook" onClick={handleFacebookLogin}>
                 <FaFacebookF className="w-5 h-5" />
               </button>
-              <button type="button" className="social-btn github" onClick={handleGitHubLogin}>
-                <FaGithub className="w-5 h-5" />
+              <button type="button" className="social-btn phone" onClick={handlePhoneLogin}>
+                <Phone className="w-5 h-5" />
               </button>
             </div>
             
