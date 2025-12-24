@@ -573,47 +573,41 @@ export const Auth = () => {
   // Forgot password view
   if (view === 'forgot-password') {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center p-5" style={{ background: '#1a1a2e' }}>
-        <div className="auth-wrapper auth-reset-wrapper">
-          <div className="credentials-panel signin" style={{ width: '100%', zIndex: 20 }}>
-            <form onSubmit={handleForgotPassword}>
-              <h2 className="slide-element" style={{ marginBottom: '15px' }}>Reset Password</h2>
-              
-              <p className="slide-element" style={{ fontSize: '14px', color: '#aaa', textAlign: 'center', marginBottom: '20px' }}>
-                Enter your email and we'll send you a link to reset your password.
-              </p>
-              
-              <div className="field-wrapper slide-element">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder=" "
-                />
-                <label>Email</label>
-                <Mail className="w-5 h-5" />
-              </div>
-              
-              <button
-                type="submit"
-                className="auth-submit-button slide-element"
-                disabled={loading}
-              >
-                {loading ? 'Sending...' : 'Send Reset Link'}
-              </button>
-              
-              <div className="switch-link slide-element">
-                <a onClick={handleBackToLogin} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
-                  <ArrowLeft className="w-4 h-4" /> Back to Login
-                </a>
-              </div>
-            </form>
-          </div>
-
-          {/* Background Shapes - positioned behind content */}
-          <div className="background-shape reset-bg"></div>
-          <div className="secondary-shape reset-secondary"></div>
+      <div className="min-h-screen flex flex-col justify-center items-center p-5 reset-page-container">
+        <div className="reset-password-card">
+          <form onSubmit={handleForgotPassword} className="reset-password-form">
+            <h2 className="reset-title">Reset Password</h2>
+            
+            <p className="reset-description">
+              Enter your email and we'll send you a link to reset your password.
+            </p>
+            
+            <div className="reset-input-wrapper">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="reset-input"
+              />
+              <Mail className="reset-input-icon" />
+            </div>
+            
+            <button
+              type="submit"
+              className="reset-submit-button"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Send Reset Link'}
+            </button>
+            
+            <div className="reset-back-link">
+              <a onClick={handleBackToLogin}>
+                <ArrowLeft className="w-4 h-4" /> Back to Login
+              </a>
+            </div>
+          </form>
         </div>
       </div>
     );
