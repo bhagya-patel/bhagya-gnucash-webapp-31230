@@ -1,0 +1,13 @@
+{{- if .Values.app.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "gnucash-app.fullname" . }}
+  labels:
+    {{- include "gnucash-app.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.app.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "gnucash-app.selectorLabels" . | nindent 6 }}
+{{- end }}

@@ -1,0 +1,40 @@
+# Staging environment overrides
+
+global:
+  environment: staging
+
+app:
+  replicaCount: 2
+
+  image:
+    tag: develop
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+
+  pdb:
+    enabled: false
+
+  env:
+    NODE_ENV: staging
+
+ingress:
+  hosts:
+    - host: staging.app.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gnucash-app-staging-tls
+      hosts:
+        - staging.app.example.com
