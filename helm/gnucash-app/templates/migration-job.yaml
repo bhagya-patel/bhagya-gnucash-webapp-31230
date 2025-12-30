@@ -1,0 +1,58 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "gnucash-app.fullname" . }}-migration-{{ .Release.Revision }}
+  labels:
+    {{- include "gnucash-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: migration
+  annotations:
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ttlSecondsAfterFinished: {{ .Values.migration.ttlSecondsAfterFinished }}
+  backoffLimit: {{ .Values.migration.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "gnucash-app.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gnucash-app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: migration
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "gnucash-app.migrationImage" . }}
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          env:
+            - name: SUPABASE_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gnucash-app.fullname" . }}-secrets
+                  key: supabase-db-url
+            - name: SUPABASE_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gnucash-app.fullname" . }}-secrets
+                  key: supabase-access-token
+            - name: SUPABASE_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "gnucash-app.fullname" . }}-secrets
+                  key: supabase-project-id
+          resources:
+            {{- toYaml .Values.migration.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
