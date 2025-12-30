@@ -1,0 +1,99 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  # ==========================================
+  # Validate PR
+  # ==========================================
+  validate:
+    name: Validate PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run build
+
+      - name: Check for console.log statements
+        run: |
+          if grep -r "console.log" src/ --include="*.ts" --include="*.tsx" | grep -v "// eslint-disable" | grep -v ".test."; then
+            echo "⚠️ Found console.log statements in source files"
+            echo "Consider removing them before merging"
+          fi
+
+  # ==========================================
+  # Docker Build Test
+  # ==========================================
+  docker-build-test:
+    name: Docker Build Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: test-build:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Test container starts
+        run: |
+          docker run -d --name test-container -p 8080:80 test-build:${{ github.sha }}
+          sleep 5
+          curl -f http://localhost:8080/health || exit 1
+          docker stop test-container
+
+  # ==========================================
+  # Size Check
+  # ==========================================
+  size-check:
+    name: Bundle Size Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check bundle size
+        run: |
+          SIZE=$(du -sk dist | cut -f1)
+          echo "Bundle size: ${SIZE}KB"
+          if [ $SIZE -gt 10240 ]; then
+            echo "⚠️ Bundle size exceeds 10MB"
+          fi
+          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "Total size: **${SIZE}KB**" >> $GITHUB_STEP_SUMMARY
