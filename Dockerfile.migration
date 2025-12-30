@@ -1,0 +1,34 @@
+# Dockerfile for Supabase Database Migrations
+FROM supabase/cli:latest AS migration
+
+WORKDIR /app
+
+# Copy Supabase configuration and migrations
+COPY supabase ./supabase
+
+# Set environment variables (these should be passed at runtime)
+ENV SUPABASE_ACCESS_TOKEN=""
+ENV SUPABASE_DB_URL=""
+ENV SUPABASE_PROJECT_ID=""
+
+# Create migration script
+RUN echo '#!/bin/sh' > /app/run-migrations.sh && \
+    echo 'set -e' >> /app/run-migrations.sh && \
+    echo '' >> /app/run-migrations.sh && \
+    echo 'echo "Starting database migrations..."' >> /app/run-migrations.sh && \
+    echo '' >> /app/run-migrations.sh && \
+    echo '# Check required environment variables' >> /app/run-migrations.sh && \
+    echo 'if [ -z "$SUPABASE_DB_URL" ]; then' >> /app/run-migrations.sh && \
+    echo '  echo "Error: SUPABASE_DB_URL is required"' >> /app/run-migrations.sh && \
+    echo '  exit 1' >> /app/run-migrations.sh && \
+    echo 'fi' >> /app/run-migrations.sh && \
+    echo '' >> /app/run-migrations.sh && \
+    echo '# Run migrations using supabase db push' >> /app/run-migrations.sh && \
+    echo 'cd /app' >> /app/run-migrations.sh && \
+    echo 'supabase db push --db-url "$SUPABASE_DB_URL"' >> /app/run-migrations.sh && \
+    echo '' >> /app/run-migrations.sh && \
+    echo 'echo "Migrations completed successfully!"' >> /app/run-migrations.sh && \
+    chmod +x /app/run-migrations.sh
+
+# Default command runs migrations
+ENTRYPOINT ["/app/run-migrations.sh"]
